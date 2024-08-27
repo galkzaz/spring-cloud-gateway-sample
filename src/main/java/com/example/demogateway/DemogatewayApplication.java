@@ -6,6 +6,7 @@ import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.userdetails.MapReactiveUserDetailsService;
 import org.springframework.security.core.userdetails.User;
@@ -28,23 +29,23 @@ public class DemogatewayApplication {
 		//@formatter:off
 		return builder.routes()
 				.route("path_route", r -> r.path("/get")
-						.uri("http://httpbin.org"))
+						.uri("http://echo.jsontest.com/key/value/one/two"))
 				.route("host_route", r -> r.host("*.myhost.org")
-						.uri("http://httpbin.org"))
+						.uri("http://echo.jsontest.com/key/value/one/two"))
 				.route("rewrite_route", r -> r.host("*.rewrite.org")
 						.filters(f -> f.rewritePath("/foo/(?<segment>.*)",
 								"/${segment}"))
-						.uri("http://httpbin.org"))
+						.uri("http://echo.jsontest.com/key/value/one/two"))
 				.route("circuitbreaker_route", r -> r.host("*.circuitbreaker.org")
 						.filters(f -> f.circuitBreaker(c -> c.setName("slowcmd")))
-								.uri("http://httpbin.org"))
+								.uri("http://echo.jsontest.com/key/value/one/two"))
 				.route("circuitbreaker_fallback_route", r -> r.host("*.circuitbreakerfallback.org")
 						.filters(f -> f.circuitBreaker(c -> c.setName("slowcmd").setFallbackUri("forward:/circuitbreakerfallback")))
-								.uri("http://httpbin.org"))
+								.uri("http://echo.jsontest.com/key/value/one/two"))
 				.route("limit_route", r -> r
 					.host("*.limited.org").and().path("/anything/**")
 						.filters(f -> f.requestRateLimiter(c -> c.setRateLimiter(redisRateLimiter())))
-					.uri("http://httpbin.org"))
+					.uri("http://echo.jsontest.com/key/value/one/two"))
 				.route("websocket_route", r -> r.path("/echo")
 					.uri("ws://localhost:9000"))
 				.build();
@@ -58,13 +59,12 @@ public class DemogatewayApplication {
 
 	@Bean
 	SecurityWebFilterChain springWebFilterChain(ServerHttpSecurity http) throws Exception {
-		return http.httpBasic().and()
-				.csrf().disable()
-				.authorizeExchange()
-				.pathMatchers("/anything/**").authenticated()
-				.anyExchange().permitAll()
-				.and()
-				.build();
+		return http.httpBasic(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable()
+                        .authorizeExchange(exchange -> exchange
+                                .pathMatchers("/anything/**").authenticated()
+                                .anyExchange().permitAll()))
+                .build();
 	}
 
 	@Bean
