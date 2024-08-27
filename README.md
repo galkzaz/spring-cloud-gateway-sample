@@ -3,6 +3,7 @@
 Sample that shows a few different ways to route and showcases some filters.
 
 Run `DemogatewayApplication`
+
 ./mvnw clean  spring-boot:run
 
 ## Samples
@@ -112,6 +113,47 @@ X-Frame-Options: DENY
 X-XSS-Protection: 1 ; mode=block
 content-length: 0
 
+$ http -a user:password :8080/anything Host:www.limited.org
+HTTP/1.1 200 OK
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Origin: *
+Cache-Control: no-cache, no-store, max-age=0, must-revalidate
+Content-Length: 604
+Content-Type: application/json
+Date: Tue, 27 Aug 2024 19:33:34 GMT
+Expires: 0
+Pragma: no-cache
+Referrer-Policy: no-referrer
+Server: gunicorn/19.9.0
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-RateLimit-Burst-Capacity: 2
+X-RateLimit-Remaining: -1
+X-RateLimit-Replenish-Rate: 1
+X-RateLimit-Requested-Tokens: 1
+X-XSS-Protection: 0
+
+{
+    "args": {},
+    "data": "",
+    "files": {},
+    "form": {},
+    "headers": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate, br",
+        "Authorization": "Basic dXNlcjpwYXNzd29yZA==",
+        "Content-Length": "0",
+        "Forwarded": "proto=http;host=www.limited.org;for=\"127.0.0.1:36406\"",
+        "Host": "httpbin.org",
+        "User-Agent": "HTTPie/3.2.2",
+        "X-Amzn-Trace-Id": "Root=1-66ce2a0e-307a5ad40eac41713034a713",
+        "X-Forwarded-Host": "www.limited.org"
+    },
+    "json": null,
+    "method": "GET",
+    "origin": "127.0.0.1, 197.39.8.168",
+    "url": "https://www.limited.org/anything"
+}
 
 ```
 
