@@ -3,6 +3,7 @@
 Sample that shows a few different ways to route and showcases some filters.
 
 Run `DemogatewayApplication`
+./mvnw clean  spring-boot:run
 
 ## Samples
 
